@@ -1,0 +1,8 @@
+---
+- hosts: pod10
+  gather_facts: no
+  vars:
+  - jira: 1-dublin
+  roles:
+  - dublin
+

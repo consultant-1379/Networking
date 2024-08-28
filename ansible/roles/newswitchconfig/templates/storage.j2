@@ -1,0 +1,69 @@
+{% for net in networks %}
+{% if  ip | ipaddr(net.netrng)>0  %}
+
+configure sntp-client primary {{ net.ntpserver }}  vr VR-Default
+enable sntp-client
+configure timezone name GMT 0 autodst begins every last sunday march at 2 0 ends every last sunday october at 2 0
+configure syslog add {{ net.imcsyslog }}:514 vr VR-Default local6
+enable log target syslog {{ net.imcsyslog }}:514 vr VR-Default local6
+configure log target syslog {{ net.imcsyslog }}:514 vr VR-Default local6 filter DefaultFilter severity warning
+configure log target syslog {{ net.imcsyslog }}:514 vr VR-Default local6 match Any
+configure log target syslog {{ net.imcsyslog }}:514 vr VR-Default local6 format timestamp seconds date Mmm-dd event-name none priority host-name tag-name
+configure syslog add {{ net.splunksyslog }}:514 vr VR-Default local3
+enable log target syslog {{ net.splunksyslog }}:514 vr VR-Default local3
+configure log target syslog {{ net.splunksyslog }}:514 vr VR-Default local3 filter DefaultFilter severity Debug-Data
+configure log target syslog {{ net.splunksyslog }}:514 vr VR-Default local3 match Any
+configure log target syslog {{ net.splunksyslog }}:514 vr VR-Default local3 format timestamp seconds date Mmm-dd event-name none priority host-name tag-name
+create vlan {{ net.name }}
+configure vlan {{ net.name }} tag {{ net.tag }}
+configure vlan {{ net.name }} ipaddress {{ ip }} {{ net.mask }}
+{% if  net.def is defined  %}
+configure iproute add default {{ net.def }} 
+{% endif %}
+configure tacacs primary server 10.0.16.20 49 client-ip {{ oobip }} vr VR-Mgmt
+configure tacacs primary shared-secret encrypted "#$ZLMB4jv+oVH+neKFE+I="
+configure tacacs-accounting primary server 10.0.16.20 49 client-ip {{ oobip }} vr VR-Mgmt
+configure tacacs-accounting primary shared-secret encrypted "#$ZLMB4jv+oVH+neKFE+I="
+enable tacacs
+enable tacacs-accounting
+enable tacacs-authorization
+configure account admin encrypted ".1CQAI$5Ob0bqcCDUKvVvzQKANbH." 
+create account admin lmiamae encrypted "Izz/qj$vh9HLn4YTd6d8Eg/oXn5e/" 
+create account admin eeicryn encrypted "30c7z6$gXBq43/RlCiddlQ/Ewkk0/" 
+create account admin ebenvan encrypted "YbB68E$Sbh/Dxmm.O27WnfdDt2oc/" 
+create account admin eeirce encrypted "Wvk3/w$1m9OMjCh9zvn8sw5Cbdzb." 
+create account admin emamulv encrypted "WpsfYp$M3/eTDKsrBBBh6KGKcwlY1"
+configure snmpv3 delete user all-non-defaults
+configure snmpv3 add user Ridgeline authentication md5 r1dgel1ne.snmp
+configure snmpv3 delete group RidgelineGroup user all-non-defaults
+configure snmpv3 add group RidgelineGroup user Ridgeline sec-model usm
+configure snmpv3 delete access all-non-defaults
+configure snmpv3 add access RidgelineGroup sec-model usm sec-level authnopriv read-view defaultAdminView write-view defaultAdminView notify-view defaultNotifyView
+disable snmp access snmp-v1v2c
+disable snmpv3 default-group
+disable snmpv3 default-user
+configure snmpv3 delete community all-non-defaults
+configure snmpv3 delete community private
+configure snmpv3 delete community public
+configure snmpv3 delete notify all-non-defaults
+configure snmpv3 delete notify defaultNotify
+configure snmpv3 delete target-addr all
+configure snmpv3 delete target-params all
+enable elrp-client
+configure elrp-client disable-ports exclude eaps-ring-ports
+enable lldp ports all
+configure lldp ports all advertise system-description
+configure lldp ports all advertise system-name
+enable flow-control rx-pause ports all
+enable flow-control tx-pause ports all
+enable jumbo-frame ports all
+disable dos-protect
+configure forwarding switching-mode cut-through
+disable web http
+disable web https
+{% endif %}
+{% endfor %}
+
+
+
+

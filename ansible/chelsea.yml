@@ -1,0 +1,7 @@
+---
+- hosts: testformark
+  roles:
+  - chelsea
+  vars:
+    ansible_user: roboferg
+    ansible_ssh_pass: N0Chanc3

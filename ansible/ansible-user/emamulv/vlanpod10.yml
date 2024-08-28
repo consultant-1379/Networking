@@ -1,0 +1,7 @@
+---
+- hosts: pod10
+  gather_facts: no
+  vars:
+  - jira: IAAS-1234
+  roles:
+  - vlanpod10

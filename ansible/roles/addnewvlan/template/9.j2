@@ -1,0 +1,69 @@
+-----------------------------
+
+---------ieatp9ds001---------
+vr VR-{{ vr }}
+{% for n in networks %}
+create vlan {{ n.name }} tag {{ n.tag }} vr vr-{{ vr }}
+configure eaps P9-IEAtEAPS-42 add protected vlan {{ n.name }}
+configure vlan {{ n.name }} add ports 1,3,5,7,9,11,13,14,15,17,19,21,23,24,25,26,27,28,29,30,31,33,35,42,45 tagged
+{% if  n.subn is defined %}
+configure vlan {{ n.name }} ipaddress {{ n.subn | ipaddr('2') }}
+enable ipforwarding vlan {{ n.name }}
+configure ospf add vlan {{ n.name }} area 0.0.0.9 passive
+configure ospf vlan {{ n.name }} priority 0
+configure ospf vlan {{ n.name }} authentication encrypted md5 112 "Cxa;:o1"
+create vrrp vlan {{ n.name }} vrid 1
+configure vrrp vlan {{ n.name }} vrid 1 priority 200
+configure vrrp vlan {{ n.name }} vrid 1 preempt delay 5
+configure vrrp vlan {{ n.name }} vrid 1 fabric-routing on
+configure vrrp vlan {{ n.name }} vrid 1 add {{ n.subn | ipaddr('1') | ipaddr('address') }}
+enable vrrp vlan {{ n.name }} vrid 1
+{% endif %}
+{% if  n.v6subn is defined %}
+configure {{ n.name }} ipaddress {{ n.v6subn | ipaddr('2') }}
+enable ipforwarding ipv6 vlan {{ n.name }}
+configure ospfv3 add vlan {{ n.name }} instance-id 0 area 0.0.0.9 link-type broadcast passive
+configure ospfv3 vlan {{ n.name }} priority 0
+create vrrp vlan {{ n.name }} vrid 6
+configure vrrp vlan {{ n.name }} vrid 6 priority 200
+configure vrrp vlan {{ n.name }} vrid 6 preempt delay 5
+configure vrrp vlan {{ n.name }} vrid 6 fabric-routing on
+configure vrrp vlan {{ n.name }} vrid 6 add {{ n.v6subn | ipaddr('1') | ipaddr('address') }}
+enable vrrp vlan {{ n.name }} vrid 6
+enable MLD vlan {{ n.name }} MLDv1
+{% endif %}
+{% endfor %}
+
+--------ieatp9ds002--------
+vr VR-{{ vr }}
+{% for n in networks %}
+create vlan {{n.name }} tag {{ n.tag }} vr vr-{{ vr }}
+configure eaps P9-IEAtEAPS-42 add protected vlan {{ n.name }}
+configure vlan {{ n.name }} add ports 1,3,5,7,9,11,13,14,15,17,19,21,23,24,25,26,27,28,29,30,31,33,35,42,45 tagged
+{% if  n.subn is defined %}
+configure vlan {{ n.name }} ipaddress {{ n.subn | ipaddr('3') }}
+enable ipforwarding vlan {{ n.name }}
+configure ospf add vlan {{ n.name }} area 0.0.0.9 passive
+configure ospf vlan {{ n.name }} priority 0
+configure ospf vlan {{ n.name }} authentication encrypted md5 112 "Cxa;:o1"
+create vrrp vlan {{ n.name }} vrid 1
+configure vrrp vlan {{ n.name }} vrid 1 fabric-routing on
+configure vrrp vlan {{ n.name }} vrid 1 add {{ n.subn | ipaddr('1') | ipaddr('address') }}
+enable vrrp vlan {{ n.name }} vrid 1
+{% endif %}
+{% if  n.v6subn is defined %}
+configure {{ n.name }} ipaddress {{ n.v6subn | ipaddr('3') }}
+enable ipforwarding ipv6 vlan {{ n.name }}
+configure ospfv3 add vlan {{ n.name }} instance-id 0 area 0.0.0.9 link-type broadcast passive
+configure ospfv3 vlan {{ n.name }} priority 0
+create vrrp vlan {{ n.name }} vrid 6
+configure vrrp vlan {{ n.name }} vrid 6 fabric-routing on
+configure vrrp vlan {{ n.name }} vrid 6 add {{ n.v6subn | ipaddr('1') | ipaddr('address') }}
+enable vrrp vlan {{ n.name }} vrid 6
+enable MLD vlan {{ n.name }} MLDv1
+{% endif %}
+{% endfor %}
+
+  ## disable igmp snooping on jgroups and internal vlans!! ##
+
+

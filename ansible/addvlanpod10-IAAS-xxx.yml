@@ -1,0 +1,8 @@
+---
+- hosts: pod10
+  gather_facts: no
+  vars:
+  - resdir: IAAS-XXXX
+  roles:
+  - addvlanpod10
+

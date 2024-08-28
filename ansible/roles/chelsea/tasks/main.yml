@@ -1,0 +1,7 @@
+---
+  - name: run show version on remote devices
+    become: true
+    become_user: roboferg
+    exos_command:
+      commands: show version
+    

@@ -1,0 +1,138 @@
+networks:
+  - name: itte-admin
+    netrng: 10.0.12.0/22
+    mask: 255.255.252.0
+    ntpserver: 10.0.12.48 
+    imcsyslog: 10.0.12.5
+    splunksyslog: 10.0.12.246 
+    tag: 295
+  - name: bete-admin
+    netrng: 10.0.0.0/24
+    mask: 255.255.255.0
+    ntpserver: 10.0.0.131
+    imcsyslog: 10.0.0.135
+    splunksyslog: 10.0.0.246
+    tag: 299
+    def: 10.0.0.1
+  - name: P7-IBMgt 
+    netrng: 10.224.35.32/27
+    mask: 255.255.255.224
+    ntpserver: 159.107.173.12
+    imcsyslog: 10.42.1.65
+    splunksyslog: 10.44.79.14
+    tag: 705
+    def: 10.224.35.33
+  - name: p7-ibmgt-2
+    netrng: 10.224.54.192/26
+    mask: 255.255.255.192
+    ntpserver: 159.107.173.12
+    imcsyslog: 10.42.1.65
+    splunksyslog: 10.44.79.14
+    tag: 764
+    def: 10.224.54.193
+  - name: P1-IBMgt 
+    netrng: 10.224.34.32/28 
+    mask: 255.255.255.240
+    ntpserver: 159.107.173.12
+    imcsyslog: 10.42.1.65
+    splunksyslog: 10.44.79.14
+    tag: 1206
+    def: 10.224.34.33
+  - name: P2-IBMgt 
+    netrng: 10.224.34.48/28
+    mask: 255.255.255.240
+    ntpserver: 159.107.173.12
+    imcsyslog: 10.42.1.65
+    splunksyslog: 10.44.79.14
+    tag: 201
+    def: 10.224.34.49
+  - name: P6-IBMgt 
+    netrng: 10.224.34.64/27 
+    mask: 255.255.255.224
+    ntpserver: 159.107.173.12
+    imcsyslog: 10.42.1.65
+    splunksyslog: 10.44.79.14
+    tag: 601
+    def: 10.224.34.65
+  - name: P6-IBMgt-2 
+    netrng: 10.224.34.112/28
+    mask: 255.255.255.240
+    ntpserver: 159.107.173.12
+    imcsyslog: 10.42.1.65
+    splunksyslog: 10.44.79.14
+    tag: 621
+    def: 10.224.34.11
+  - name: P5-IBMgt 
+    netrng: 10.224.34.128/26 
+    mask: 255.255.255.192
+    ntpserver: 159.107.173.12
+    imcsyslog: 10.42.1.65
+    splunksyslog: 10.44.79.14
+    tag: 501
+    def: 10.224.34.129
+  - name: P4-IBMgt 
+    netrng: 10.224.35.80/28 
+    mask: 255.255.255.240
+    ntpserver: 159.107.173.12
+    imcsyslog: 10.42.1.65
+    splunksyslog: 10.44.79.14
+    tag: 401
+    def: 10.224.35.81
+  - name: P8-IBMgt 
+    netrng: 10.224.35.224/27 
+    mask: 255.255.255.224
+    ntpserver: 159.107.173.12
+    imcsyslog: 10.42.1.65
+    splunksyslog: 10.44.79.14
+    tag: 805
+    def: 10.224.35.225
+  - name: P9-IBMgt
+    netrng: 10.224.38.32/27
+    mask: 255.255.255.224
+    ntpserver: 159.107.173.12
+    imcsyslog: 10.42.1.65
+    splunksyslog: 10.44.79.14
+    tag: 905
+    def: 10.224.38.33
+  - name: ITTE-OOB
+    netrng: 10.0.16.0/23
+    tacacserv: 10.0.16.20
+    mask: 255.255.254.0
+    ipnetmask: 10.0.17.254
+    tag: 4050
+  - name: ITTE-OOB2
+    netrng: 10.0.20.0/23
+    mask: 255.255.254.0
+    tacacserv: 10.0.16.20
+    ipnetmask: 10.0.21.254
+    tag: 4051                      
+  - name: GTOOB
+    netrng: 10.0.11.0/24
+    tacacserv: 10.0.11.5
+    mask: 255.255.255.0
+    ipnetmask: 10.0.11.254
+    tag: 3151
+  - name: gtp1-IBMgt/28
+    netrng: 192.168.23.0/28
+    mask: 255.255.255.240
+    tag: 2795
+    def: 192.168.23.1
+    splunksyslog: 10.0.11.240
+    ntpserver: 10.0.10.253
+    imcsyslog: 10.42.1.65
+  - name: gtp2-IBMgt
+    netrng: 172.16.4.160/27
+    mask: 255.255.255.224
+    tag: 3214
+    def: 172.16.4.161
+    splunksyslog: 10.0.11.240
+    ntpserver: 10.0.10.253
+    imcsyslog: 10.42.1.65      
+  - name: gtp3-IBMgt
+    netrng: 172.16.5.0/26
+    mask: 255.255.255.192
+    tag: 3287
+    def: 172.16.5.1 
+    splunksyslog: 10.0.11.240
+    ntpserver: 10.0.10.253
+    imcsyslog: 10.42.1.65 

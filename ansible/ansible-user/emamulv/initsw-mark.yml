@@ -1,0 +1,6 @@
+---
+- hosts: mark
+  gather_facts: no
+  roles:
+  - initsw-mark
+

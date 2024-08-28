@@ -1,0 +1,15 @@
+---
+   - name: incl vars
+     include_vars: /etc/ansible/roles/initsw-mark/vars/net.yml
+     connection: local
+   - name: Create a new file
+     command: touch ./results/{{ inventory_hostname }}.conf 
+     connection: local
+   - name: run extremefacts module to get extreme facts
+     debug: msg="System {{ inventory_hostname }}" 
+     connection: local
+   - name: update networkfile
+     connection: local
+     template: src={{ type }}.j2 dest=./results/{{ inventory_hostname }}.conf
+#   - name: prompt to continue
+#     pause: prompt='EAPS mode requires confirmation when applying config Please confirm ,  Press return to continue. Press Ctrl+c and then "a" to abort'

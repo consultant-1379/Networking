@@ -1,0 +1,23 @@
+  networks:  
+  - name: xdn-OpStk-11-Internal-API
+    tag: 2524
+    subn: 172.17.0.0/26
+  - name: xdn-OpStk-11-Provisioning
+    tag: 2525
+    subn: 172.17.0.64/26
+  - name: xdn-OpStk-11-Tenant-VXLAN
+    tag: 2526
+    subn: 172.17.0.128/26
+  - name: xdn-OpStk-11-Public-Tenant
+    tag: 2523
+    subn: 10.58.2.0/26
+    v6subn: 2001:1b77:a004:8006:0:2523::/64
+  - name: xdn-OpStk-11-Ext-Floating
+    tag: 2528
+    subn: 172.17.1.0/25
+  - name: xdn-OpStk-11-Access
+    tag: 2529
+    subn: 172.17.0.192/26
+  - name: xdn0-infra-1
+    tag: 2527
+    subn: 172.17.1.128/26

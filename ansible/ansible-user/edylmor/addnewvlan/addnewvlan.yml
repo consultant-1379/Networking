@@ -1,0 +1,25 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+  pre_tasks:
+    - name: whoami
+      shell: whoami
+      register: signumresult
+    - set_fact:
+         signum: "{{ signumresult.stdout }}"
+  vars_prompt:
+    - name: "resdir"
+      prompt: "please enter ticket number"
+      private: no
+    - name: "pod"
+      prompt: "what network pod are new networks required in?\n-  5   (pod 5) \n-  6   (pod 6) \n-  7   (pod 7) \n-  8   (pod 8  backup) \n-  9   (pod 9) \n-  10  (pod 10 access) \n-  11  (pod 11 netsim)\n  "
+      private: no
+    - name: "vr"
+      prompt: "what Domain are networks required in?\n-  ECN   \n-  EDN   \n-  EDU   \n-  YLB   (youlab) \n"
+      private: no
+  roles:
+#   - addnewvlan
+   - {role: addnewvlan, when: pod != "" and pod == "11" or pod == "10" or pod == "9" or pod == "8" or pod == "7" or pod == "6" or pod == "5"}
+
+

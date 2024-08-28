@@ -1,0 +1,27 @@
+-----------------------------
+
+---------ieatp7ds001---------
+vr VR-{{ vr }}
+{% for n in networks %}
+create vlan {{ n.name }} tag {{ n.tag }} vr vr-{{ vr }}
+configure eaps P7-IEAtEAPS-38 add protected vlan {{ n.name }}
+configure eaps P7-IEAtEAPS-40 add protected vlan {{ n.name }}
+configure eaps P7-IEAtEAPS-42 add protected vlan {{ n.name }}
+configure eaps P7-IEAtEAPS-44 add protected vlan {{ n.name }}
+configure vlan {{ n.name }} add ports 1:1,1:3,1:5,1:7,1:9,1:11,1:13,1:15,1:17,1:19,1:21,1:23,1:25,1:27,1:29,1:31,1:33,1:35,1:36,1:38,1:40,1:42,1:44,2:38,2:40,2:42,2:44 tagged
+{% if  n.subn is defined %}
+configure vlan {{ n.name }} ipaddress {{ n.subn | ipaddr('1') }}
+enable ipforwarding vlan {{ n.name }}
+configure ospf add vlan {{ n.name }} area 0.0.0.7 passive
+configure ospf vlan {{ n.name }} priority 0
+configure ospf vlan {{ n.name }} authentication encrypted md5 112 "Cxa;:o1"
+{% endif %}
+{% if  n.v6subn is defined %}
+configure {{ n.name }} ipaddress {{ n.v6subn | ipaddr('1') }}
+enable ipforwarding ipv6 vlan {{ n.name }}
+configure ospfv3 add vlan {{ n.name }} instance-id 0 area 0.0.0.7 link-type broadcast passive
+configure ospfv3 vlan {{ n.name }} priority 0
+enable MLD vlan {{ n.name }} MLDv1
+{% endif %}
+{% endfor %}
+

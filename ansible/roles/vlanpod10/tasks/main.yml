@@ -1,0 +1,19 @@
+---
+   - name: incl vars
+     include_vars: ./vlans.yml
+     connection: local
+   - name: Create a new file
+     file: path=../results/{{ jira }} state=directory
+     connection: local
+   - name: Create a new file
+     file: path=../results/{{ jira }}/{{ inventory_hostname }}conf state=touch
+     connection: local
+   - name: run extremefacts module to get extreme facts
+     debug: msg= "System {{ inventory_hostname }} {{ jira }}"
+     connection: local
+   - name: update networkfile
+     connection: local
+     template: src=/etc/ansible/roles/vlanpod10/template/{{ inventory_hostname }}.j2 dest=../results/{{ jira }}/{{ inventory_hostname }}conf
+   - name: add title to file && append to end of file
+     connection: local
+     shell: cat ../results/{{ jira }}/{{ inventory_hostname }}conf >> ../results/{{ jira }}/{{ jira }}.doc

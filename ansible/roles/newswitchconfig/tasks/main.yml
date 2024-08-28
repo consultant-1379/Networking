@@ -1,0 +1,31 @@
+---
+  - name: incl vars
+    include_vars: /etc/ansible/roles/newswitchconfig/vars/net.yml
+    connection: local
+  - name: Create a new Directory in Results
+    file: path=../../results/{{resdir}} state=directory 
+  - name: Create a new file that Directory
+    file: path=../../results/{{resdir}}/{{ hostname }}.conf state=touch  
+  - name: create header in change doc
+    shell: "{{ item }}"
+    with_items:
+       - echo "----------------------------------------------------------------" > ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+       - echo "--- Network switch configs for Pod {{ pod }}                         ---" >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+       - echo "--- Ticket Number{{':'}} {{ resdir }}                                    ---" >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+       - echo "--- Requestor{{':'}} {{ signum }}                                       ---" >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+       - echo "--- Date{{':'}} $(date)                       ---" >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+       - echo "----------------------------------------------------------------" >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+       - echo "--- Approved By{{':'}} <Approver> | <Date/Time>                    ---" >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+       - echo "----------------------------------------------------------------" >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+       - echo "--- Comments{{':'}}                                                ---" >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+       - echo "---                                                          ---" >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+       - echo "----------------------------------------------------------------" >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+
+  - name: update networkfile
+    connection: local
+    template: src=/etc/ansible/roles/newswitchconfig/templates/{{ type }}.j2 dest=../../results/{{resdir}}/{{ hostname }}.conf
+  - name: add title to file && append to end of file
+    connection: local
+    shell: cat ../../results/{{ resdir }}/*.conf >> ../../results/{{resdir}}/{{ resdir }}_pod{{ pod }}_$(date +%F)_switch_config.doc
+
+

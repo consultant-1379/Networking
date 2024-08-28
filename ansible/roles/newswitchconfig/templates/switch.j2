@@ -1,0 +1,107 @@
+{%- set default_failure_messages = ["In Band IP address:"+ip+" is NOT in any range from vars/net.yml, please verify & retry","Out of Band IP address:"+oobip+" is NOT in any range from vars/net.yml, please verify & retry"] -%}
+{%- set failure_messages = [] -%}
+{%- set in_band_success_config = [] -%}
+{%- set out_of_band_success_config = [] -%}
+{%- for net in networks -%}
+{%- if net.netrng is defined -%}
+{%- if net.tacacserv is not defined -%}
+{%- if ip | ipaddr(net.netrng)>0 -%}
+{%- if in_band_success_config|length==0 -%}
+{{ in_band_success_config.append(net) }}
+{{ failure_messages.append("In Band IP address:"+ip+" is fine and within range:"+net.netrng) }}
+{%- endif -%}
+{%- endif -%}
+{%- else -%}
+{%- if oobip | ipaddr(net.netrng)>0 -%}
+{%- if out_of_band_success_config|length==0 -%}
+{{ out_of_band_success_config.append(net) }}
+{{ failure_messages.append("Out of Band IP address:"+oobip+" is fine and within range:"+net.netrng) }}
+{%- endif -%}
+{%- endif -%}
+{%- endif -%}
+{%- endif -%}
+{%- endfor %}
+
+--------------------------------------------------
+        --------- {{ hostname }} ---------
+--------------------------------------------------
+
+{% if in_band_success_config|length > 0 and out_of_band_success_config|length > 0 %}
+configure sntp-client primary {{ in_band_success_config[0].ntpserver }}  vr VR-Default
+enable sntp-client
+configure timezone name GMT 0 autodst begins every last sunday march at 2 0 ends every last sunday october at 2 0
+configure syslog add {{ in_band_success_config[0].imcsyslog }}:514 vr VR-Default local6
+enable log target syslog {{ in_band_success_config[0].imcsyslog }}:514 vr VR-Default local6
+configure log target syslog {{ in_band_success_config[0].imcsyslog }}:514 vr VR-Default local6 filter DefaultFilter severity warning
+configure log target syslog {{ in_band_success_config[0].imcsyslog }}:514 vr VR-Default local6 match Any
+configure log target syslog {{ in_band_success_config[0].imcsyslog }}:514 vr VR-Default local6 format timestamp seconds date Mmm-dd event-name none priority host-name tag-name
+configure syslog add {{ in_band_success_config[0].splunksyslog }}:514 vr VR-Default local3
+enable log target syslog {{ in_band_success_config[0].splunksyslog }}:514 vr VR-Default local3
+configure log target syslog {{ in_band_success_config[0].splunksyslog }}:514 vr VR-Default local3 filter DefaultFilter severity Debug-Data
+configure log target syslog {{ in_band_success_config[0].splunksyslog }}:514 vr VR-Default local3 match Any
+configure log target syslog {{ in_band_success_config[0].splunksyslog }}:514 vr VR-Default local3 format timestamp seconds date Mmm-dd event-name none priority host-name tag-name
+create vlan {{ in_band_success_config[0].name }}
+configure vlan {{ in_band_success_config[0].name }} tag {{ in_band_success_config[0].tag }}
+configure vlan {{ in_band_success_config[0].name }} ipaddress {{ ip }} {{ in_band_success_config[0].mask }}
+{% if  in_band_success_config[0].def is defined  %}
+configure iproute add default {{ in_band_success_config[0].def }}
+{% endif %}
+configure tacacs primary server {{ out_of_band_success_config[0].tacacserv }} 49 client-ip {{ oobip }} vr VR-Mgmt
+configure tacacs primary shared-secret encrypted "#$ZLMB4jv+oVH+neKFE+I="
+configure tacacs-accounting primary server {{ out_of_band_success_config[0].tacacserv }} 49 client-ip {{ oobip }} vr VR-Mgmt
+configure tacacs-accounting primary shared-secret encrypted "#$ZLMB4jv+oVH+neKFE+I="
+enable tacacs
+enable tacacs-accounting
+enable tacacs-authorization
+configure account admin encrypted ".1CQAI$5Ob0bqcCDUKvVvzQKANbH."
+create account admin lmiamae encrypted "Izz/qj$vh9HLn4YTd6d8Eg/oXn5e/"
+create account admin eeicryn encrypted "30c7z6$gXBq43/RlCiddlQ/Ewkk0/"
+create account admin ebenvan encrypted "YbB68E$Sbh/Dxmm.O27WnfdDt2oc/"
+create account admin eeirce encrypted "Wvk3/w$1m9OMjCh9zvn8sw5Cbdzb."
+create account admin emamulv encrypted "WpsfYp$M3/eTDKsrBBBh6KGKcwlY1"
+create account admin lmimkly encrypted "$5$v.mYWH$ZEBJb1PsTP46GXlUN/IY7BCvty8xVxwvqDZ0NepHL79" 
+configure snmpv3 delete user all-non-defaults
+configure snmpv3 add user Ridgeline authentication md5 r1dgel1ne.snmp
+configure snmpv3 delete group RidgelineGroup user all-non-defaults
+configure snmpv3 add group RidgelineGroup user Ridgeline sec-model usm
+configure snmpv3 delete access all-non-defaults
+configure snmpv3 add access RidgelineGroup sec-model usm sec-level authnopriv read-view defaultAdminView write-view defaultAdminView notify-view defaultNotifyView
+disable snmp access snmp-v1v2c
+disable snmpv3 default-group
+disable snmpv3 default-user
+configure snmpv3 delete community all-non-defaults
+configure snmpv3 delete community private
+configure snmpv3 delete community public
+configure snmpv3 delete notify all-non-defaults
+configure snmpv3 delete notify defaultNotify
+configure snmpv3 delete target-addr all
+configure snmpv3 delete target-params all
+enable elrp-client
+configure elrp-client disable-ports exclude eaps-ring-ports
+enable lldp ports all
+configure lldp ports all advertise system-description
+configure lldp ports all advertise system-name
+disable web http
+disable web https
+{% elif in_band_success_config|length > 0 %}
+{{ failure_messages.append(default_failure_messages[1]) }}
+{% for message in failure_messages %}
+##############################################################################
+{{ message }}
+##############################################################################
+{% endfor %}
+{% elif out_of_band_success_config|length > 0 %}
+{{ failure_messages.append(default_failure_messages[0]) }}
+{% for message in failure_messages %}
+##############################################################################
+{{ message }}
+##############################################################################
+{% endfor %}
+{% else %}
+{% set failure_messages = default_failure_messages %}
+{% for message in failure_messages %}
+##############################################################################
+{{ message }}
+##############################################################################
+{% endfor %}
+{% endif %}

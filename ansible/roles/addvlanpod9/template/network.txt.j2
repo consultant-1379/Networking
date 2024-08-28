@@ -1,0 +1,31 @@
+ieatp9ds001
+vr VR-ECN
+create vlan {{ vlan }} tag {{ tag }}
+configure vlan {{ vlan }} ipaddress {{ ip1 }} 
+enable ipforwarding vlan {{ vlan }}
+configure ospf add vlan {{ vlan }} area 0.0.0.9 passive
+configure ospf vlan {{ vlan }} priority 0
+configure ospf vlan {{ vlan }} authentication encrypted md5 112 "Cxa;:o1"
+configure vlan {{ vlan }} add port 45 tagged
+create vrrp vlan {{ vlan }} vrid 1
+configure vrrp vlan {{ vlan }} vrid 1 priority 200
+configure vrrp vlan {{ vlan }} vrid 1 preempt delay 5
+configure vrrp vlan {{ vlan }} vrid 1 fabric-routing on
+configure vrrp vlan {{ vlan }} vrid 1 add {{ vip }}
+enable vrrp vlan {{ vlan }} vrid 1
+
+ieatp9ds002
+vr VR-ECN
+create vlan {{ vlan }} tag {{ tag }}
+configure vlan {{ vlan }} ipaddress {{ ip2 }} 
+enable ipforwarding vlan {{ vlan }}
+configure ospf add vlan {{ vlan }} area 0.0.0.9 passive
+configure ospf vlan {{ vlan }} priority 0
+configure ospf vlan {{ vlan }} authentication encrypted md5 112 "Cxa;:o1"
+configure vlan {{ vlan }} add port 45 tagged
+create vrrp vlan {{ vlan }} vrid 1
+configure vrrp vlan {{ vlan }} vrid 1 fabric-routing on
+configure vrrp vlan {{ vlan }} vrid 1 add {{ vip }}
+enable vrrp vlan {{ vlan }} vrid 1
+
+

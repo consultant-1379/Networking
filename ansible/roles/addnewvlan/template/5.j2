@@ -1,0 +1,35 @@
+-----------------------------
+
+---------ieatp5ds001---------
+vr VR-{{ vr }}
+{% for n in networks %}
+create vlan {{ n.name }} tag {{ n.tag }} vr vr-{{ vr }}
+configure eaps AtEAPS-ENM4 add protected vlan {{ n.name }}
+configure eaps AtEAPS-ENM5 add protected vlan {{ n.name }}
+configure eaps ateaps-ENM1 add protected vlan {{ n.name }}
+configure eaps ateaps-ENM2 add protected vlan {{ n.name }}
+configure eaps ateaps-ENM3 add protected vlan {{ n.name }}
+configure eaps ateaps-ENM6 add protected vlan {{ n.name }}
+configure eaps ateaps-ENM7 add protected vlan {{ n.name }}
+configure eaps P5-IEAtEAPS-11 add protected vlan {{ n.name }}
+configure eaps P5-IEAtEAPS-23 add protected vlan {{ n.name }}
+configure eaps P5-IEAtEAPS-27 add protected vlan {{ n.name }}
+configure vlan {{ n.name }} add ports 1:1-13,1:15-16,1:19-23,1:25-27,1:30,1:32,1:36,1:37-41,1:43,1:45-46 tagged
+
+{% if  n.subn is defined %}
+configure vlan {{ n.name }} ipaddress {{ n.subn | ipaddr('1') }}
+enable ipforwarding vlan {{ n.name }}
+configure ospf add vlan {{ n.name }} area 0.0.0.5 passive
+configure ospf vlan {{ n.name }} priority 0
+configure ospf vlan {{ n.name }} authentication encrypted md5 112 "Cxa;:o1"
+{% endif %}
+{% if  n.v6subn is defined %}
+configure {{ n.name }} ipaddress {{ n.v6subn | ipaddr('1') }}
+enable ipforwarding ipv6 vlan {{ n.name }}
+configure ospfv3 add vlan {{ n.name }} instance-id 0 area 0.0.0.5 link-type broadcast passive
+configure ospfv3 vlan {{ n.name }} priority 0
+enable MLD vlan {{ n.name }} MLDv1
+{% endif %}
+{% endfor %}
+
+   ## disable igmp snooping on jgroups and internal vlans!! ##

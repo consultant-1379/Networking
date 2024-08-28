@@ -1,0 +1,7 @@
+networks:
+  - name: NPTx86-OSS-Storage-2
+    tag: 126
+    eaps: ateaps-517
+    eaps: ateaps-517
+    eaps: ateaps-517
+    eaps: ateaps-517

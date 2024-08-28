@@ -1,0 +1,30 @@
+---
+- hosts: localhost
+  gather_facts: no
+  vars:
+  pre_tasks:
+    - name: whoami
+      shell: whoami
+      register: signumresult
+    - set_fact:
+         signum: "{{ signumresult.stdout }}"
+         type: switch
+  vars_prompt:
+    - name: "resdir"
+      prompt: "please enter your ticket number"
+      private: no
+    - name: "pod"
+      prompt: "please enter your pod number"
+      private: no
+
+    - name: "hostname"
+      prompt: "please enter your new switch name"
+      private: no
+    - name: "ip"
+      prompt: "please enter inband mgt ip for your newswitch"
+      private: no
+    - name: "oobip"
+      prompt: "please enter out of band ip for your newswitch"
+      private: no
+  roles:
+   - newswitchconfig

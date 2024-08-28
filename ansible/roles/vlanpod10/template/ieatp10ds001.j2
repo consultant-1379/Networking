@@ -1,0 +1,35 @@
+ieatp10ds001
+{% for n in networks %}
+vr vr-{{ n.vr }}
+create vlan {{ n.name }} vr vr-{{ n.vr }}
+configure vlan {{ n.name }} tag {{ n.tag }}
+configure vlan {{ n.name }} add ports 1,7,45 tagged
+{% if n.subn is defined and n.subn is not none %}
+configure vlan {{ n.name }} ipaddress {{ n.subn | ipaddr('2') }}
+enable ipforwarding vlan {{ n.name }}
+configure ospf add vlan {{ n.name }} area 0.0.0.10 passive
+create vrrp vlan {{ n.name }} vrid 1
+configure vrrp vlan {{ n.name }} vrid 1 priority 200
+configure vrrp vlan {{ n.name }} vrid 1 preempt delay 5
+configure vrrp vlan {{ n.name }} vrid 1 fabric-routing on
+configure vrrp vlan {{ n.name }} vrid 1 add {{ n.subn | ipaddr('1') | ipaddr('address') }}
+enable vrrp vlan {{ n.name }} vrid 1
+{% endif %}
+
+{% if n.v6subn is defined and n.v6subn is not none %}
+configure vlan {{ n.name }} ipaddress {{ n.v6subn | ipaddr('2') }}
+enable ipforwarding ipv6 {{ n.name }}
+configure ospfv3 add vlan {{ n.name }} instance-id 0 area 0.0.0.10 link-type broadcast passive
+configure ospfv3 vlan {{ n.name }} priority 0
+create vrrp vlan {{ n.name }} vrid 6
+configure vrrp vlan {{ n.name }} vrid 6 priority 200
+configure vrrp vlan {{ n.name }} vrid 6 preempt delay 5
+configure vrrp vlan {{ n.name }} vrid 6 fabric-routing on
+configure vrrp vlan {{ n.name }} vrid 6 add {{ n.v6subn | ipaddr('1') | ipaddr('address') }}
+enable vrrp vlan {{ n.name }} vrid 6
+{% endif %}
+
+{% endfor %}
+
+
+

@@ -1,0 +1,16 @@
+---
+   - name: incl vars
+     include_vars: /etc/ansible/roles/addvlanpod9/vars/net.yml
+     connection: local
+   - name: Create a new file
+     file: path=./results/{{resdir}} state=directory 
+     connection: local
+   - name: Create a new file
+     file: path=./results/{{resdir}}/{{ inventory_hostname }}conf state=touch owner=root group=root mode=0555 
+     connection: local
+   - name: run extremefacts module to get extreme facts
+     debug: msg="System {{ inventory_hostname }} {{ resdir }}" 
+     connection: local
+   - name: update networkfile
+     connection: local
+     template: src=/etc/ansible/roles/addvlanpod9/template/network.txt.j2 dest=./results/{{ resdir}}/{{ inventory_hostname }}conf

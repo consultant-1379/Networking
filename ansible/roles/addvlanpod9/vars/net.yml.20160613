@@ -1,0 +1,3 @@
+networks:
+  - name: EDN-PDU-DS2
+    tag: 405
